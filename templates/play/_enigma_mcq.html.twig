@@ -1,0 +1,62 @@
+<div id="mcq-enigma">
+    {% for qIndex, question in enigma.data.questions %}
+        <div class="mb-6 bg-gray-50 border-2 border-gray-300 rounded-lg p-6">
+            <h3 class="text-xl font-semibold mb-4">{{ qIndex + 1 }}. {{ question.question }}</h3>
+            <div class="space-y-2">
+                {% for aIndex, answer in question.answers %}
+                    <label class="flex items-center space-x-3 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                        <input type="radio" name="question-{{ qIndex }}" value="{{ aIndex }}" class="w-5 h-5">
+                        <span>{{ answer }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+
+    <div class="text-center">
+        <button onclick="validateMcq()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+            Valider mes réponses
+        </button>
+    </div>
+</div>
+
+<script>
+function validateMcq() {
+    const answers = {};
+    const questions = document.querySelectorAll('[name^="question-"]');
+    
+    questions.forEach(input => {
+        if (input.checked) {
+            const questionIndex = parseInt(input.name.split('-')[1]);
+            answers[questionIndex] = parseInt(input.value);
+        }
+    });
+
+    if (Object.keys(answers).length < {{ enigma.data.questions|length }}) {
+        alert('Veuillez répondre à toutes les questions !');
+        return;
+    }
+
+    fetch('{{ path('play_validate_enigma') }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            enigmaId: {{ enigma.id }},
+            answer: answers
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageEl = document.getElementById('message');
+        if (data.success) {
+            document.getElementById('secret-code').textContent = data.secretCode;
+            document.getElementById('success-section').classList.remove('hidden');
+            document.getElementById('mcq-enigma').classList.add('hidden');
+        } else {
+            messageEl.className = 'bg-red-100 border-l-4 border-red-500 p-4';
+            messageEl.innerHTML = '<p class="text-red-700">❌ Une ou plusieurs réponses sont incorrectes. Réessayez !</p>';
+            messageEl.classList.remove('hidden');
+        }
+    });
+}
+</script>

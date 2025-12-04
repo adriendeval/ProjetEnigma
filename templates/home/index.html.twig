@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - Projet Enigma{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Bienvenue au Jeu d'Énigmes</h1>
+        
+        {% if game %}
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-semibold text-blue-900 mb-2">{{ game.title }}</h2>
+                {% if game.welcomeImg %}
+                    <img src="{{ asset('images/games/' ~ game.welcomeImg) }}" alt="{{ game.title }}" class="mx-auto rounded-lg mb-4 max-w-md">
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+            <p class="text-gray-700">Créez votre équipe pour participer au jeu d'énigmes !</p>
+        </div>
+
+        {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+            <div>
+                {{ form_label(form.name, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
+                {{ form_widget(form.name, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent'}}) }}
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div>
+                {{ form_label(form.avatar, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
+                <div class="grid grid-cols-3 gap-4">
+                    {% for child in form.avatar %}
+                        <label class="cursor-pointer">
+                            <div class="border-2 border-gray-300 rounded-lg p-2 hover:border-blue-500 transition">
+                                {{ form_widget(child, {'attr': {'class': 'hidden'}}) }}
+                                <img src="{{ asset('images/avatars/' ~ child.vars.label) }}" alt="Avatar" class="w-full h-24 object-contain">
+                            </div>
+                        </label>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.avatar) }}
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                Créer l'équipe
+            </button>
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('label .border-2').forEach(label => {
+            label.classList.remove('border-blue-500', 'bg-blue-50');
+            label.classList.add('border-gray-300');
+        });
+        if(this.checked) {
+            this.closest('label').querySelector('.border-2').classList.remove('border-gray-300');
+            this.closest('label').querySelector('.border-2').classList.add('border-blue-500', 'bg-blue-50');
+        }
+    });
+});
+</script>
+{% endblock %}

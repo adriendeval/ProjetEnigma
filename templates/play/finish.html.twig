@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Code Final - Projet Enigma{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto">
+    <div id="timer" class="bg-gradient-to-r from-blue-900 to-gray-800 text-white rounded-lg p-4 mb-6 text-center">
+        <div id="countdown" class="text-3xl font-bold"></div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">🎯 Code Final</h1>
+        
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+            <p class="text-gray-700 text-lg">
+                Vous avez terminé toutes les énigmes ! 🎉<br>
+                Saisissez maintenant le code final pour déverrouiller la victoire.
+            </p>
+        </div>
+
+        <div id="form-section">
+            <div class="mb-6">
+                <label for="final-code" class="block text-gray-700 font-semibold mb-2">Code final :</label>
+                <input type="text" id="final-code" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg text-2xl text-center font-bold focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Entrez le code...">
+            </div>
+
+            <div id="message" class="mb-6 hidden"></div>
+
+            <button onclick="validateFinalCode()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-xl transition">
+                🔓 Déverrouiller
+            </button>
+        </div>
+
+        <div id="victory-section" class="hidden text-center">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-4xl font-bold text-green-600 mb-4">Victoire !</h2>
+            <div class="bg-green-50 border-2 border-green-500 rounded-lg p-6 mb-6">
+                <p class="text-2xl font-bold text-gray-800 mb-2">Temps réalisé :</p>
+                <p id="duration" class="text-4xl font-bold text-green-600"></p>
+                <p class="text-xl font-semibold text-gray-700 mt-4">Classement : <span id="position" class="text-2xl text-blue-600"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const startTime = {{ setting.startedAt ? setting.startedAt.timestamp : 'Date.now()/1000' }};
+const duration = {{ setting.gameDuration }} * 60;
+
+function updateTimer() {
+    const now = Date.now() / 1000;
+    const elapsed = now - startTime;
+    const timeLeft = Math.max(0, duration - elapsed);
+    
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = Math.floor(timeLeft % 60);
+    
+    const timerEl = document.getElementById('timer');
+    const countdownEl = document.getElementById('countdown');
+    countdownEl.textContent = `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (timeLeft === 0) {
+        countdownEl.textContent = '⏱️ Temps écoulé !';
+        timerEl.classList.remove('from-blue-900', 'to-gray-800');
+        timerEl.classList.add('bg-red-600');
+    }
+}
+
+updateTimer();
+const timerInterval = setInterval(updateTimer, 1000);
+
+function validateFinalCode() {
+    const code = document.getElementById('final-code').value;
+
+    fetch('{{ path('play_validate_final_code') }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ finalCode: code })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageEl = document.getElementById('message');
+        if (data.success) {
+            clearInterval(timerInterval);
+            document.getElementById('duration').textContent = data.duration;
+            document.getElementById('position').textContent = '#' + data.position;
+            document.getElementById('form-section').classList.add('hidden');
+            document.getElementById('victory-section').classList.remove('hidden');
+        } else {
+            messageEl.className = 'bg-red-100 border-l-4 border-red-500 p-4';
+            messageEl.innerHTML = '<p class="text-red-700">❌ ' + data.message + '</p>';
+            messageEl.classList.remove('hidden');
+        }
+    });
+}
+
+document.getElementById('final-code').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        validateFinalCode();
+    }
+});
+</script>
+{% endblock %}

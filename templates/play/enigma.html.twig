@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ enigma.title }} - Projet Enigma{% endblock %}
+
+{% block body %}
+<div class="max-w-4xl mx-auto">
+    <div id="timer" class="bg-gradient-to-r from-blue-900 to-gray-800 text-white rounded-lg p-4 mb-6 text-center">
+        <div id="countdown" class="text-3xl font-bold"></div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ enigma.title }}</h1>
+        <p class="text-gray-600 mb-6">{{ enigma.instruction }}</p>
+
+        {% if enigma.type.label == 'photo' %}
+            {% include 'play/_enigma_photo.html.twig' %}
+        {% elseif enigma.type.label == 'timeline' %}
+            {% include 'play/_enigma_timeline.html.twig' %}
+        {% elseif enigma.type.label == 'mcq' %}
+            {% include 'play/_enigma_mcq.html.twig' %}
+        {% endif %}
+
+        <div id="message" class="mt-6 hidden"></div>
+        <div id="success-section" class="mt-6 hidden">
+            <div class="bg-green-50 border-l-4 border-green-500 p-6 mb-4">
+                <p class="text-green-700 text-lg mb-2">✅ Bravo ! Voici votre code secret :</p>
+                <p id="secret-code" class="text-3xl font-bold text-green-900"></p>
+            </div>
+            <a href="{{ path('play_enigma', {order: enigma.order + 1}) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                Énigme suivante →
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+const startTime = {{ setting.startedAt ? setting.startedAt.timestamp : 'Date.now()/1000' }};
+const duration = {{ setting.gameDuration }} * 60;
+
+function updateTimer() {
+    const now = Date.now() / 1000;
+    const elapsed = now - startTime;
+    const timeLeft = Math.max(0, duration - elapsed);
+    
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = Math.floor(timeLeft % 60);
+    
+    const timerEl = document.getElementById('timer');
+    const countdownEl = document.getElementById('countdown');
+    countdownEl.textContent = `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (timeLeft === 0) {
+        countdownEl.textContent = '⏱️ Temps écoulé !';
+        timerEl.classList.remove('from-blue-900', 'to-gray-800');
+        timerEl.classList.add('bg-red-600');
+    }
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);
+</script>
+{% endblock %}

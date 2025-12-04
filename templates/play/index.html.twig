@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Règles du jeu - Projet Enigma{% endblock %}
+
+{% block body %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">{{ game.title }}</h1>
+            {% if game.welcomeImg %}
+                <img src="{{ asset('images/games/' ~ game.welcomeImg) }}" alt="{{ game.title }}" class="mx-auto rounded-lg mb-4 max-w-md">
+            {% endif %}
+            <div class="text-lg text-gray-700 whitespace-pre-line">{{ game.welcomeMsg }}</div>
+        </div>
+
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">📋 Règles du jeu</h2>
+            <ul class="space-y-2 text-gray-700">
+                <li>⏱️ <strong>{{ setting.gameDuration }} minutes</strong> pour finir toutes les énigmes</li>
+                <li>🔐 Chaque énigme donne un <strong>code secret</strong></li>
+                <li>🎯 À la fin, saisissez le <strong>code final</strong> pour gagner</li>
+                <li>🏆 Plus vous êtes rapides, meilleur sera votre classement !</li>
+            </ul>
+        </div>
+
+        <div id="timer" class="bg-gradient-to-r from-blue-900 to-gray-800 text-white rounded-lg p-6 mb-8 text-center">
+            <div class="text-lg mb-2">Temps restant</div>
+            <div id="countdown" class="text-5xl font-bold">{{ setting.gameDuration }}:00</div>
+        </div>
+
+        <div class="text-center">
+            <a href="{{ path('play_enigma', {order: 1}) }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-xl transition">
+                🎮 Première énigme
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+const duration = {{ setting.gameDuration }} * 60;
+let timeLeft = duration;
+
+function updateTimer() {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    document.getElementById('countdown').textContent = 
+        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (timeLeft > 0) {
+        timeLeft--;
+    } else {
+        document.getElementById('countdown').textContent = 'Temps écoulé !';
+        document.getElementById('timer').classList.remove('from-blue-900', 'to-gray-800');
+        document.getElementById('timer').classList.add('bg-red-600');
+    }
+}
+
+updateTimer();
+setInterval(updateTimer, 1000);
+</script>
+{% endblock %}

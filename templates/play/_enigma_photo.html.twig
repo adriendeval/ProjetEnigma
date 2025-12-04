@@ -1,0 +1,73 @@
+<div id="photo-enigma">
+    <div id="pairs-container">
+        {% for index, pair in enigma.data.pairs %}
+            <div class="pair mb-8 border-2 border-gray-300 rounded-lg p-4" data-pair="{{ index }}">
+                <h3 class="text-xl font-semibold mb-4 text-center">Paire {{ index + 1 }}</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="cursor-pointer hover:opacity-80 transition" onclick="selectImage({{ index }}, 0)">
+                        <img src="{{ asset('images/enigmas/' ~ pair.image1) }}" alt="Image 1" class="w-full rounded-lg border-4 border-transparent" id="img-{{ index }}-0">
+                        <p class="text-center mt-2 font-semibold">Image A</p>
+                    </div>
+                    <div class="cursor-pointer hover:opacity-80 transition" onclick="selectImage({{ index }}, 1)">
+                        <img src="{{ asset('images/enigmas/' ~ pair.image2) }}" alt="Image 2" class="w-full rounded-lg border-4 border-transparent" id="img-{{ index }}-1">
+                        <p class="text-center mt-2 font-semibold">Image B</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="text-center">
+        <div class="mb-4">
+            <span class="text-lg">Erreurs : <span id="error-count" class="font-bold text-red-600">0</span> / 2</span>
+        </div>
+        <button onclick="validatePhoto()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+            Valider mes réponses
+        </button>
+    </div>
+</div>
+
+<script>
+let answers = {};
+let errors = 0;
+
+function selectImage(pairIndex, imageIndex) {
+    answers[pairIndex] = imageIndex;
+    
+    document.getElementById(`img-${pairIndex}-0`).classList.remove('border-blue-500');
+    document.getElementById(`img-${pairIndex}-1`).classList.remove('border-blue-500');
+    document.getElementById(`img-${pairIndex}-${imageIndex}`).classList.add('border-blue-500');
+}
+
+function validatePhoto() {
+    fetch('{{ path('play_validate_enigma') }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            enigmaId: {{ enigma.id }},
+            answer: answers
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageEl = document.getElementById('message');
+        if (data.success) {
+            document.getElementById('secret-code').textContent = data.secretCode;
+            document.getElementById('success-section').classList.remove('hidden');
+            document.getElementById('photo-enigma').classList.add('hidden');
+        } else {
+            errors++;
+            document.getElementById('error-count').textContent = errors;
+            
+            if (errors >= 3) {
+                messageEl.className = 'bg-red-100 border-l-4 border-red-500 p-4';
+                messageEl.innerHTML = '<p class="text-red-700">❌ Dommage... <button onclick="location.reload()" class="ml-4 bg-red-600 text-white px-4 py-2 rounded">Réessayer</button></p>';
+            } else {
+                messageEl.className = 'bg-yellow-100 border-l-4 border-yellow-500 p-4';
+                messageEl.innerHTML = '<p class="text-yellow-700">⚠️ Une ou plusieurs réponses sont incorrectes. Réessayez !</p>';
+            }
+            messageEl.classList.remove('hidden');
+        }
+    });
+}
+</script>

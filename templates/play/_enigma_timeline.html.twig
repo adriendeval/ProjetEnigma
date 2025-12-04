@@ -1,0 +1,52 @@
+<div id="timeline-enigma">
+    <div class="bg-gray-50 border-2 border-gray-300 rounded-lg p-6 mb-6">
+        <p class="text-gray-700 mb-4">Glissez-déposez les éléments pour les remettre dans le bon ordre :</p>
+        <ul id="sortable-list" class="space-y-2">
+            {% for item in enigma.data.items %}
+                <li class="bg-white border-2 border-gray-300 rounded-lg p-4 cursor-move hover:bg-gray-50 transition" data-id="{{ item.id }}">
+                    {{ item.text }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="text-center">
+        <button onclick="validateTimeline()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition">
+            Valider l'ordre
+        </button>
+    </div>
+</div>
+
+<script>
+const sortable = new Sortable(document.getElementById('sortable-list'), {
+    animation: 150,
+    ghostClass: 'bg-blue-100'
+});
+
+function validateTimeline() {
+    const items = document.querySelectorAll('#sortable-list li');
+    const order = Array.from(items).map(item => parseInt(item.dataset.id));
+
+    fetch('{{ path('play_validate_enigma') }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            enigmaId: {{ enigma.id }},
+            answer: order
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const messageEl = document.getElementById('message');
+        if (data.success) {
+            document.getElementById('secret-code').textContent = data.secretCode;
+            document.getElementById('success-section').classList.remove('hidden');
+            document.getElementById('timeline-enigma').classList.add('hidden');
+        } else {
+            messageEl.className = 'bg-red-100 border-l-4 border-red-500 p-4';
+            messageEl.innerHTML = '<p class="text-red-700">❌ L\'ordre n\'est pas correct. Réessayez !</p>';
+            messageEl.classList.remove('hidden');
+        }
+    });
+}
+</script>
