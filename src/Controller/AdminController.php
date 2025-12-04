@@ -289,4 +289,18 @@ class AdminController extends AbstractController
 
         return new JsonResponse(['teams' => $teamsData]);
     }
+
+    #[Route('/session/teams/delete-all', name: 'admin_teams_delete_all', methods: ['POST'])]
+    public function deleteAllTeams(EntityManagerInterface $em, TeamRepository $teamRepository): Response
+    {
+        $teams = $teamRepository->findAll();
+        foreach ($teams as $team) {
+            $em->remove($team);
+        }
+        $em->flush();
+
+        $this->addFlash('success', 'Toutes les équipes ont été supprimées !');
+
+        return $this->redirectToRoute('admin_session');
+    }
 }

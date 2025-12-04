@@ -26,7 +26,7 @@ class AppFixtures extends Fixture
         $admin = new User();
         $admin->setEmail('admin@enigma.fr');
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
-        $admin->setRoles(['ROLE_ADMIN']);
+        $admin->setRoles(['ROLE_ADMIN', 'ROLE_PROF']);
         $admin->setVerified(true);
         $manager->persist($admin);
 
@@ -67,26 +67,26 @@ class AppFixtures extends Fixture
         $enigma->setOrder(1);
         $enigma->setTitle("IA ou pas ?");
         $enigma->setInstruction("Parmi chaque paire d'images, trouvez celle qui n'a PAS été générée par une Intelligence Artificielle. Vous avez droit à 2 erreurs maximum.");
-        $enigma->setSecretCode('AI42');
+        $enigma->setSecretCode('0123');
         $enigma->setData([
             'pairs' => [
                 [
-                    'id' => 0,
-                    'image1' => 'pair1-real.jpg',
-                    'image2' => 'pair1-ai.jpg',
-                    'correct' => 0
+                    'id' => 0, // ID de la paire
+                    'image1' => 'img1-real.jpg', // Image réelle
+                    'image2' => 'img1-ai.jpg', // Image générée par IA
+                    'correct' => 0 // L'image correcte est la première (id 0)
                 ],
                 [
-                    'id' => 1,
-                    'image1' => 'pair2-ai.jpg',
-                    'image2' => 'pair2-real.jpg',
-                    'correct' => 1
+                    'id' => 1, // ID de la paire
+                    'image1' => 'img2-ai.jpg', // Image générée par IA
+                    'image2' => 'img2-real.jpg', // Image réelle
+                    'correct' => 1 // L'image correcte est la deuxième (id 1)
                 ],
                 [
-                    'id' => 2,
-                    'image1' => 'pair3-real.jpg',
-                    'image2' => 'pair3-ai.jpg',
-                    'correct' => 0
+                    'id' => 2, // ID de la paire
+                    'image1' => 'img3-real.jpg', // Image réelle
+                    'image2' => 'img3-ai.jpg', // Image générée par IA
+                    'correct' => 0 // L'image correcte est la première (id 0)
                 ],
             ]
         ]);
@@ -98,7 +98,7 @@ class AppFixtures extends Fixture
         $enigma2->setOrder(2);
         $enigma2->setTitle("Histoire de l'IA");
         $enigma2->setInstruction("Remettez ces événements marquants de l'histoire de l'Intelligence Artificielle dans le bon ordre chronologique.");
-        $enigma2->setSecretCode('CHRONO2024');
+        $enigma2->setSecretCode('4567');
         $enigma2->setData([
             'items' => [
                 ['id' => 1, 'text' => 'Test de Turing proposé par Alan Turing (1950)'],
@@ -116,7 +116,7 @@ class AppFixtures extends Fixture
         $enigma3->setOrder(3);
         $enigma3->setTitle("Culture générale IA");
         $enigma3->setInstruction("Répondez correctement à toutes les questions sur l'Intelligence Artificielle.");
-        $enigma3->setSecretCode('CULTURE42');
+        $enigma3->setSecretCode('8910');
         $enigma3->setData([
             'questions' => [
                 [
@@ -131,7 +131,7 @@ class AppFixtures extends Fixture
                 ],
                 [
                     'question' => 'Quel jeu AlphaGo a-t-il maîtrisé ?',
-                    'answers' => ['Échecs', 'Poker', 'Go', 'Dames'],
+                    'answers' => ['Les Échecs', 'Le Poker', 'Le jeu de Go', 'Les Dames'],
                     'correct' => 2
                 ],
             ]

@@ -46,11 +46,18 @@
     <div class="bg-white rounded-lg shadow-lg p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold text-gray-800">Équipes inscrites ({{ teams|length }})</h2>
-            {% if setting.isGameStarted %}
-                <button onclick="refreshTeams()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
-                    🔄 Actualiser
-                </button>
-            {% endif %}
+            <div class="flex gap-2">
+                {% if setting.isGameStarted %}
+                    <button onclick="refreshTeams()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
+                        🔄 Actualiser
+                    </button>
+                {% endif %}
+                <form method="post" action="{{ path('admin_teams_delete_all') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer TOUTES les équipes ? Cette action est irréversible.');">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
+                        🗑️ Tout supprimer
+                    </button>
+                </form>
+            </div>
         </div>
 
         <div id="teams-container">

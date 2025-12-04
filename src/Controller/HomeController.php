@@ -9,6 +9,7 @@ use App\Repository\GameRepository;
 use App\Repository\SettingRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,9 +36,10 @@ class HomeController extends AbstractController
             $em->persist($team);
             $em->flush();
 
-            $request->getSession()->set('team_id', $team->getId());
+            $response = $this->redirectToRoute('waiting');
+            $response->headers->setCookie(new Cookie('team_id', $team->getId(), strtotime('+1 year')));
 
-            return $this->redirectToRoute('waiting');
+            return $response;
         }
 
         return $this->render('home/index.html.twig', [
@@ -49,7 +51,7 @@ class HomeController extends AbstractController
     #[Route('/waiting', name: 'waiting')]
     public function waiting(Request $request, EntityManagerInterface $em): Response
     {
-        $teamId = $request->getSession()->get('team_id');
+        $teamId = $request->cookies->get('team_id');
         if (!$teamId) {
             return $this->redirectToRoute('home');
         }
@@ -67,7 +69,7 @@ class HomeController extends AbstractController
     #[Route('/check-game-started', name: 'check_game_started')]
     public function checkGameStarted(Request $request, EntityManagerInterface $em, SettingRepository $settingRepository): JsonResponse
     {
-        $teamId = $request->getSession()->get('team_id');
+        $teamId = $request->cookies->get('team_id');
         if (!$teamId) {
             return new JsonResponse(['started' => false]);
         }

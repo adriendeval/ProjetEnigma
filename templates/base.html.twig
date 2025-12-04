@@ -6,19 +6,27 @@
         <title>{% block title %}Projet Enigma{% endblock %}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-        {% block stylesheets %}{% endblock %}
+
+        <style>
+        {% block stylesheets %}
+        * {
+            outline: none;
+        }
+        {% endblock %}
+        </style>
+
     </head>
     <body class="bg-gray-50 min-h-screen flex flex-col">
-        <nav class="bg-gradient-to-r from-blue-900 to-gray-800 text-white shadow-lg">
-            <div class="container mx-auto px-4 py-4">
+        <nav class="bg-white text-gray-800 shadow-sm">
+            <div class="container mx-auto px-4 py-3">
                 <div class="flex justify-between items-center">
-                    <a href="{{ path('home') }}" class="text-2xl font-bold">🧩 Projet Enigma</a>
+                    <a href="{{ path('home') }}" class="text-xl font-semibold">Projet Enigma</a>
                     <div class="space-x-4">
                         {% if app.user %}
-                            <a href="{{ path('admin_dashboard') }}" class="hover:text-blue-300">Dashboard</a>
-                            <a href="{{ path('logout') }}" class="hover:text-blue-300">Déconnexion</a>
+                            <a href="{{ path('admin_dashboard') }}" class="text-gray-600 hover:text-blue-600">Tableau de bord</a>
+                            <a href="{{ path('logout') }}" class="text-gray-600 hover:text-blue-600">Déconnexion</a>
                         {% else %}
-                            <a href="{{ path('login') }}" class="hover:text-blue-300">Connexion Admin</a>
+                            <a href="{{ path('login') }}" class="text-gray-600 hover:text-blue-600">Connexion Admin</a>
                         {% endif %}
                     </div>
                 </div>
@@ -41,9 +49,9 @@
             {% block body %}{% endblock %}
         </main>
 
-        <footer class="bg-gray-800 text-white py-4 mt-auto">
+        <footer class="bg-gray-100 text-gray-600 py-4 mt-auto">
             <div class="container mx-auto px-4 text-center">
-                <p>&copy; {{ "now"|date("Y") }} Projet Enigma - Jeu d'énigmes pédagogiques</p>
+                <p>&copy; {{ "now"|date("Y") }} Projet Enigma</p>
             </div>
         </footer>
 

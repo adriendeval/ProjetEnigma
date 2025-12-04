@@ -15,14 +15,14 @@ Ce type d'énigme présente des paires d'images où l'élève doit identifier qu
   "pairs": [
     {
       "id": 0,
-      "image1": "pair1-real.jpg",
-      "image2": "pair1-ai.jpg",
+      "image1": "img1-real.jpg",
+      "image2": "img1-ai.jpg",
       "correct": 0
     },
     {
       "id": 1,
-      "image1": "pair2-ai.jpg",
-      "image2": "pair2-real.jpg",
+      "image1": "img2-ai.jpg",
+      "image2": "img2-real.jpg",
       "correct": 1
     }
   ]

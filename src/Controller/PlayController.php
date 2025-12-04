@@ -18,7 +18,7 @@ class PlayController extends AbstractController
     #[Route('/', name: 'play_index')]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
-        $teamId = $request->getSession()->get('team_id');
+        $teamId = $request->cookies->get('team_id');
         if (!$teamId) {
             return $this->redirectToRoute('home');
         }
@@ -45,7 +45,7 @@ class PlayController extends AbstractController
     #[Route('/enigma/{order}', name: 'play_enigma')]
     public function enigma(int $order, Request $request, EntityManagerInterface $em, EnigmaRepository $enigmaRepository): Response
     {
-        $teamId = $request->getSession()->get('team_id');
+        $teamId = $request->cookies->get('team_id');
         if (!$teamId) {
             return $this->redirectToRoute('home');
         }
@@ -81,7 +81,7 @@ class PlayController extends AbstractController
     #[Route('/validate-enigma', name: 'play_validate_enigma', methods: ['POST'])]
     public function validateEnigma(Request $request, EntityManagerInterface $em, EnigmaRepository $enigmaRepository): JsonResponse
     {
-        $teamId = $request->getSession()->get('team_id');
+        $teamId = $request->cookies->get('team_id');
         if (!$teamId) {
             return new JsonResponse(['success' => false, 'message' => 'Équipe introuvable']);
         }
@@ -123,7 +123,7 @@ class PlayController extends AbstractController
     #[Route('/finish', name: 'play_finish')]
     public function finish(Request $request, EntityManagerInterface $em): Response
     {
-        $teamId = $request->getSession()->get('team_id');
+        $teamId = $request->cookies->get('team_id');
         if (!$teamId) {
             return $this->redirectToRoute('home');
         }
@@ -149,7 +149,7 @@ class PlayController extends AbstractController
     #[Route('/validate-final-code', name: 'play_validate_final_code', methods: ['POST'])]
     public function validateFinalCode(Request $request, EntityManagerInterface $em): JsonResponse
     {
-        $teamId = $request->getSession()->get('team_id');
+        $teamId = $request->cookies->get('team_id');
         if (!$teamId) {
             return new JsonResponse(['success' => false, 'message' => 'Équipe introuvable']);
         }
