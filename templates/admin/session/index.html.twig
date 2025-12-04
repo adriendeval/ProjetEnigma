@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Session de jeu - Projet Enigma{% endblock %}
+
+{% block body %}
+<div class="max-w-6xl mx-auto">
+    <h1 class="text-4xl font-bold text-gray-800 mb-8">Session de jeu</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2 bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Thème : {{ game.title }}</h2>
+            
+            {% if not setting.isGameStarted %}
+                <form method="post" action="{{ path('admin_session_start') }}" class="space-y-4">
+                    <div>
+                        <label for="finalCode" class="block text-gray-700 font-semibold mb-2">Code final :</label>
+                        <input type="text" name="finalCode" id="finalCode" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Code à saisir à la fin">
+                    </div>
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition">
+                        🚀 Lancer la partie
+                    </button>
+                </form>
+            {% else %}
+                <div class="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
+                    <p class="text-green-700 font-semibold">✅ Partie en cours</p>
+                    <p class="text-gray-600">Démarrée le {{ setting.startedAt|date('d/m/Y à H:i') }}</p>
+                    <p class="text-gray-600">Durée : {{ setting.gameDuration }} minutes</p>
+                </div>
+                <form method="post" action="{{ path('admin_session_stop') }}" onsubmit="return confirm('Terminer la partie ?');">
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                        ⏹️ Terminer la partie
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Paramètres</h2>
+            <div class="space-y-2 text-gray-700">
+                <p><strong>Durée :</strong> {{ setting.gameDuration }} min</p>
+                <p><strong>Code final :</strong> <span class="font-mono">{{ setting.finalCode ?: 'Non défini' }}</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">Équipes inscrites ({{ teams|length }})</h2>
+            {% if setting.isGameStarted %}
+                <button onclick="refreshTeams()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition text-sm">
+                    🔄 Actualiser
+                </button>
+            {% endif %}
+        </div>
+
+        <div id="teams-container">
+            {% if teams is empty %}
+                <p class="text-gray-600 text-center py-8">Aucune équipe inscrite pour le moment</p>
+            {% else %}
+                <table class="w-full">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-gray-700 font-semibold">Avatar</th>
+                            <th class="px-6 py-3 text-left text-gray-700 font-semibold">Nom</th>
+                            {% if setting.isGameStarted %}
+                                <th class="px-6 py-3 text-center text-gray-700 font-semibold">Énigme</th>
+                                <th class="px-6 py-3 text-center text-gray-700 font-semibold">Temps</th>
+                                <th class="px-6 py-3 text-center text-gray-700 font-semibold">Statut</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody id="teams-tbody">
+                        {% for team in teams %}
+                            <tr class="border-t">
+                                <td class="px-6 py-4">
+                                    <img src="{{ asset('images/avatars/' ~ team.avatar.filename) }}" alt="Avatar" class="w-12 h-12 object-contain">
+                                </td>
+                                <td class="px-6 py-4 font-semibold">{{ team.name }}</td>
+                                {% if setting.isGameStarted %}
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded font-bold">#{{ team.currentEnigma }}</span>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-mono">
+                                        {% if team.startedAt %}
+                                            {% set endTime = team.finishedAt ?: 'now'|date('U') %}
+                                            {% set diff = team.startedAt.timestamp %}
+                                            -
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 text-center">
+                                        {% if team.finishedAt %}
+                                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded font-bold">✅ #{{ team.position }}</span>
+                                        {% else %}
+                                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded">⏳ En cours</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if setting.isGameStarted %}
+<script>
+function refreshTeams() {
+    fetch('{{ path('admin_teams_progress') }}')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('teams-tbody');
+            if (data.teams.length === 0) return;
+            
+            tbody.innerHTML = data.teams.map(team => `
+                <tr class="border-t">
+                    <td class="px-6 py-4">
+                        <div class="w-12 h-12"></div>
+                    </td>
+                    <td class="px-6 py-4 font-semibold">${team.name}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded font-bold">#${team.currentEnigma}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center font-mono">${team.elapsed}</td>
+                    <td class="px-6 py-4 text-center">
+                        ${team.finished 
+                            ? `<span class="bg-green-100 text-green-800 px-3 py-1 rounded font-bold">✅ #${team.position}</span>`
+                            : `<span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded">⏳ En cours</span>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        });
+}
+
+setInterval(refreshTeams, 10000);
+</script>
+{% endif %}
+{% endblock %}
