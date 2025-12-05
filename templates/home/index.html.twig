@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - Projet Enigma
-{% endblock %}
+{% block title %}Accueil - Projet Enigma{% endblock %}
 
 {% block body %}
 	<div class="max-w-2xl mx-auto">
@@ -28,7 +27,7 @@
 			{# Choix de l'avatar #}
 			<div>
 				{{ form_label(form.avatar, "Avatar de l'équipe", {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
-				<div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+				<div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
 					{% for child in form.avatar %}
 						<label class="cursor-pointer group">
 							<div class="border-2 border-gray-200 rounded-lg p-3 hover:border-blue-400 hover:shadow-md transition-all duration-200 bg-gray-50 group-hover:bg-blue-50">
@@ -42,7 +41,7 @@
 			</div>
 
 			<button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition ease-in-out duration-150">
-				Créer l'équipe
+				Créer l'équipe et commencer
 			</button>
 			{{ form_end(form) }}
 		</div>

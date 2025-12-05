@@ -27,14 +27,14 @@ class Enigma
     #[ORM\Column(name: '`order`')]
     private ?int $order = null;
 
+    #[ORM\Column]
+    private ?bool $isActive = true;
+
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $instruction = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $secretCode = null;
 
     #[ORM\Column(type: Types::JSON)]
     private array $data = [];
@@ -88,6 +88,18 @@ class Enigma
         return $this;
     }
 
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): static
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
     public function getTitle(): ?string
     {
         return $this->title;
@@ -108,18 +120,6 @@ class Enigma
     public function setInstruction(string $instruction): static
     {
         $this->instruction = $instruction;
-
-        return $this;
-    }
-
-    public function getSecretCode(): ?string
-    {
-        return $this->secretCode;
-    }
-
-    public function setSecretCode(string $secretCode): static
-    {
-        $this->secretCode = $secretCode;
 
         return $this;
     }

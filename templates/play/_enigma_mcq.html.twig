@@ -49,7 +49,6 @@ function validateMcq() {
     .then(data => {
         const messageEl = document.getElementById('message');
         if (data.success) {
-            document.getElementById('secret-code').textContent = data.secretCode;
             document.getElementById('success-section').classList.remove('hidden');
             document.getElementById('mcq-enigma').classList.add('hidden');
         } else {

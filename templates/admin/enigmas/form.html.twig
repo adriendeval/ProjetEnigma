@@ -14,7 +14,7 @@
         {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
             <div>
                 {{ form_label(form.type, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
-                {{ form_widget(form.type, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'}}) }}
+                {{ form_widget(form.type, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500', 'data-action': 'change->enigma-form#typeChanged'}}) }}
                 {{ form_errors(form.type) }}
             </div>
 
@@ -36,17 +36,117 @@
                 {{ form_errors(form.instruction) }}
             </div>
 
-            <div>
-                {{ form_label(form.secretCode, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
-                {{ form_widget(form.secretCode, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'}}) }}
-                {{ form_errors(form.secretCode) }}
+            {# Hidden JSON field #}
+            <div class="hidden">
+                {{ form_widget(form.data) }}
             </div>
 
-            <div>
-                {{ form_label(form.data, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
-                {{ form_widget(form.data, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-mono text-sm'}}) }}
-                {{ form_errors(form.data) }}
-                {{ form_help(form.data) }}
+            {# MCQ Section - Visible si type = mcq #}
+            {% set currentType = form.type.vars.data ? form.type.vars.data.label : '' %}
+            
+            <div id="mcq-section" class="border-t pt-6 mt-6 {% if currentType != 'mcq' %}hidden{% endif %}">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">📝 Questions QCM</h3>
+                <div id="mcq-holder" data-prototype="{{ form_widget(form.mcqQuestions.vars.prototype)|e('html_attr') }}" data-index="{{ form.mcqQuestions.children|length }}">
+                    {% for question in form.mcqQuestions %}
+                        <div class="relative bg-gray-50 p-4 rounded mb-4 border border-gray-200 mcq-item">
+                            <div class="mb-3">
+                                {{ form_label(question.question) }}
+                                {{ form_widget(question.question) }}
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <div>
+                                    {{ form_label(question.answer0) }}
+                                    {{ form_widget(question.answer0) }}
+                                </div>
+                                <div>
+                                    {{ form_label(question.answer1) }}
+                                    {{ form_widget(question.answer1) }}
+                                </div>
+                                <div>
+                                    {{ form_label(question.answer2) }}
+                                    {{ form_widget(question.answer2) }}
+                                </div>
+                                <div>
+                                    {{ form_label(question.answer3) }}
+                                    {{ form_widget(question.answer3) }}
+                                </div>
+                            </div>
+                            <div>
+                                {{ form_label(question.correct) }}
+                                {{ form_widget(question.correct) }}
+                            </div>
+                            <button type="button" class="absolute top-2 right-2 text-red-600 hover:text-red-800 delete-item">Supprimer <i class="fi fi-rs-trash"></i></button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" id="add-mcq" class="mt-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
+                    + Ajouter une question
+                </button>
+            </div>
+
+            {# Timeline Section #}
+            <div id="timeline-section" class="border-t pt-6 mt-6 {% if currentType != 'timeline' %}hidden{% endif %}">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">📅 Événements Timeline</h3>
+                <p class="text-sm text-gray-500 mb-4">L'ordre des éléments ci-dessous détermine l'ordre chronologique correct.</p>
+                <div id="timeline-holder" data-prototype="{{ form_widget(form.timelineItems.vars.prototype)|e('html_attr') }}" data-index="{{ form.timelineItems.children|length }}">
+                    {% for item in form.timelineItems %}
+                        <div class="relative bg-gray-50 p-4 rounded mb-4 border border-gray-200 timeline-item">
+                            <div class="grid grid-cols-4 gap-2">
+                                <div>
+                                    {{ form_label(item.date) }}
+                                    {{ form_widget(item.date) }}
+                                </div>
+                                <div class="col-span-3">
+                                    {{ form_label(item.text) }}
+                                    {{ form_widget(item.text) }}
+                                </div>
+                            </div>
+                            <button type="button" class="absolute top-2 right-2 text-red-600 hover:text-red-800 delete-item">Supprimer <i class="fi fi-rs-trash"></i></button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" id="add-timeline" class="mt-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
+                    + Ajouter un événement
+                </button>
+            </div>
+
+            {# Photo Section #}
+            <div id="photo-section" class="border-t pt-6 mt-6 {% if currentType != 'photo' %}hidden{% endif %}">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">🖼️ Paires de Photos</h3>
+                <p class="text-sm text-gray-500 mb-4">Pour chaque paire, ajoutez deux images et indiquez laquelle est la vraie photo (non générée par IA).</p>
+                <div id="photo-holder" data-prototype="{{ form_widget(form.photoPairs.vars.prototype)|e('html_attr') }}" data-index="{{ form.photoPairs.children|length }}">
+                    {% for pair in form.photoPairs %}
+                        <div class="relative bg-gray-50 p-5 rounded-lg mb-4 border border-gray-200 photo-item">
+                            <div class="space-y-4">
+                                {# Image 1 #}
+                                <div class="bg-white p-3 rounded border">
+                                    {{ form_label(pair.image1, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
+                                    {{ form_widget(pair.image1) }}
+                                    {{ form_help(pair.image1) }}
+                                </div>
+                                
+                                {# Image 2 #}
+                                <div class="bg-white p-3 rounded border">
+                                    {{ form_label(pair.image2, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
+                                    {{ form_widget(pair.image2) }}
+                                    {{ form_help(pair.image2) }}
+                                </div>
+                                
+                                {# Choix de la bonne réponse #}
+                                <div class="bg-blue-50 p-4 rounded border border-blue-200">
+                                    {{ form_label(pair.correct, null, {'label_attr': {'class': 'block text-blue-800 font-semibold mb-3'}}) }}
+                                    <div class="flex gap-6">
+                                        {{ form_widget(pair.correct) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="absolute top-2 right-2 text-red-600 hover:text-red-800 delete-item">Supprimer <i class="fi fi-rs-trash"></i></button>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" id="add-photo" class="mt-2 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
+                    + Ajouter une paire de photos
+                </button>
             </div>
 
             <div class="flex space-x-4">
@@ -60,4 +160,81 @@
         {{ form_end(form) }}
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelect = document.getElementById('enigma_type');
+    const mcqSection = document.getElementById('mcq-section');
+    const timelineSection = document.getElementById('timeline-section');
+    const photoSection = document.getElementById('photo-section');
+
+    // Fonction pour afficher/masquer les sections
+    function updateSections() {
+        const selectedText = typeSelect.options[typeSelect.selectedIndex].text.toLowerCase().trim();
+        
+        mcqSection.classList.add('hidden');
+        timelineSection.classList.add('hidden');
+        photoSection.classList.add('hidden');
+
+        if (selectedText === 'mcq') {
+            mcqSection.classList.remove('hidden');
+        } else if (selectedText === 'timeline') {
+            timelineSection.classList.remove('hidden');
+        } else if (selectedText === 'photo') {
+            photoSection.classList.remove('hidden');
+        }
+    }
+
+    typeSelect.addEventListener('change', updateSections);
+
+    // Gestion ajout MCQ
+    document.getElementById('add-mcq').addEventListener('click', function() {
+        const holder = document.getElementById('mcq-holder');
+        const prototype = holder.dataset.prototype;
+        let index = parseInt(holder.dataset.index) || 0;
+        const newForm = prototype.replace(/__name__/g, index);
+        holder.dataset.index = index + 1;
+
+        const item = document.createElement('div');
+        item.className = 'relative bg-gray-50 p-4 rounded mb-4 border border-gray-200 mcq-item';
+        item.innerHTML = newForm + '<button type="button" class="absolute top-2 right-2 text-red-600 hover:text-red-800 delete-item">Supprimer <i class="fi fi-rs-trash"></i></button>';
+        holder.appendChild(item);
+    });
+
+    // Gestion ajout Timeline
+    document.getElementById('add-timeline').addEventListener('click', function() {
+        const holder = document.getElementById('timeline-holder');
+        const prototype = holder.dataset.prototype;
+        let index = parseInt(holder.dataset.index) || 0;
+        const newForm = prototype.replace(/__name__/g, index);
+        holder.dataset.index = index + 1;
+
+        const item = document.createElement('div');
+        item.className = 'relative bg-gray-50 p-4 rounded mb-4 border border-gray-200 timeline-item';
+        item.innerHTML = newForm + '<button type="button" class="absolute top-2 right-2 text-red-600 hover:text-red-800 delete-item">Supprimer <i class="fi fi-rs-trash"></i></button>';
+        holder.appendChild(item);
+    });
+
+    // Gestion ajout Photo
+    document.getElementById('add-photo').addEventListener('click', function() {
+        const holder = document.getElementById('photo-holder');
+        const prototype = holder.dataset.prototype;
+        let index = parseInt(holder.dataset.index) || 0;
+        const newForm = prototype.replace(/__name__/g, index);
+        holder.dataset.index = index + 1;
+
+        const item = document.createElement('div');
+        item.className = 'relative bg-gray-50 p-4 rounded mb-4 border border-gray-200 photo-item';
+        item.innerHTML = newForm + '<button type="button" class="absolute top-2 right-2 text-red-600 hover:text-red-800 delete-item">Supprimer <i class="fi fi-rs-trash"></i></button>';
+        holder.appendChild(item);
+    });
+
+    // Gestion suppression (délégation d'événements)
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('delete-item')) {
+            e.target.closest('.mcq-item, .timeline-item, .photo-item').remove();
+        }
+    });
+});
+</script>
 {% endblock %}

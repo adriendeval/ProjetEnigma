@@ -43,7 +43,7 @@ Ce type d'énigme présente des paires d'images où l'élève doit identifier qu
 #### Règles du jeu :
 - L'élève peut faire 2 erreurs maximum
 - À la 3ème erreur, il doit recommencer l'énigme
-- Une fois validée, l'énigme révèle le code secret
+- Une fois validée, l'élève passe à l'énigme suivante
 
 ---
 
@@ -145,8 +145,7 @@ Ce type d'énigme présente une série de questions avec plusieurs réponses pos
 
 1. **Choisissez le type** d'énigme adapté à votre objectif pédagogique
 2. **Rédigez le titre** et les **instructions** claires
-3. **Définissez un code secret** unique (ex: "AI42", "CHRONO2024")
-4. **Préparez les données** selon le format JSON du type choisi
+3. **Préparez les données** selon le format JSON du type choisi
 
 ### Étape 2 : Ajouter les médias (si nécessaire)
 
@@ -166,7 +165,6 @@ Pour les énigmes de type "photo" :
    - **Ordre** : Numéro de l'énigme dans la séquence (1, 2, 3, etc.)
    - **Titre** : Titre accrocheur
    - **Instructions** : Consignes claires pour les élèves
-   - **Code secret** : Code qui sera révélé après réussite
    - **Données JSON** : Collez votre structure JSON
 6. Enregistrez
 
@@ -179,7 +177,6 @@ Pour les énigmes de type "photo" :
    - Les images s'affichent correctement (pour type "photo")
    - Les éléments peuvent être réorganisés (pour type "timeline")
    - Les réponses sont correctement validées (pour type "mcq")
-   - Le code secret s'affiche après réussite
 
 ---
 
@@ -189,7 +186,6 @@ Pour les énigmes de type "photo" :
 
 **Titre** : "Vraie ou fausse photo ?"
 **Instructions** : "Identifiez les vraies photographies parmi les images générées par IA"
-**Code secret** : "REAL2024"
 
 **JSON** :
 ```json
@@ -221,7 +217,6 @@ Pour les énigmes de type "photo" :
 
 **Titre** : "L'évolution de l'informatique"
 **Instructions** : "Remettez ces inventions dans l'ordre chronologique"
-**Code secret** : "CHRONO1945"
 
 **JSON** :
 ```json
@@ -240,7 +235,6 @@ Pour les énigmes de type "photo" :
 
 **Titre** : "Quiz Cybersécurité"
 **Instructions** : "Testez vos connaissances en sécurité informatique"
-**Code secret** : "SECURE42"
 
 **JSON** :
 ```json

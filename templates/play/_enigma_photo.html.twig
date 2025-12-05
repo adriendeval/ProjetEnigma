@@ -52,7 +52,6 @@ function validatePhoto() {
     .then(data => {
         const messageEl = document.getElementById('message');
         if (data.success) {
-            document.getElementById('secret-code').textContent = data.secretCode;
             document.getElementById('success-section').classList.remove('hidden');
             document.getElementById('photo-enigma').classList.add('hidden');
         } else {

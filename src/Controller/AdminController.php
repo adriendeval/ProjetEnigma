@@ -123,9 +123,6 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $dataString = $form->get('data')->getData();
-            $enigma->setData(json_decode($dataString, true) ?: []);
-
             $em->persist($enigma);
             $em->flush();
 
@@ -145,13 +142,9 @@ class AdminController extends AbstractController
     public function editEnigma(Enigma $enigma, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(EnigmaType::class, $enigma);
-        $form->get('data')->setData(json_encode($enigma->getData(), JSON_PRETTY_PRINT));
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $dataString = $form->get('data')->getData();
-            $enigma->setData(json_decode($dataString, true) ?: []);
-
             $em->flush();
 
             $this->addFlash('success', 'Énigme modifiée avec succès !');
@@ -302,5 +295,34 @@ class AdminController extends AbstractController
         $this->addFlash('success', 'Toutes les équipes ont été supprimées !');
 
         return $this->redirectToRoute('admin_session');
+    }
+
+    #[Route('/games/{id}/selection', name: 'admin_games_selection')]
+    public function selection(Game $game, EnigmaRepository $enigmaRepository): Response
+    {
+        $enigmas = $enigmaRepository->findBy(['game' => $game], ['order' => 'ASC']);
+
+        return $this->render('admin/games/selection.html.twig', [
+            'game' => $game,
+            'enigmas' => $enigmas,
+        ]);
+    }
+
+    #[Route('/games/{id}/selection/save', name: 'admin_games_selection_save', methods: ['POST'])]
+    public function saveSelection(Game $game, Request $request, EntityManagerInterface $em, EnigmaRepository $enigmaRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        foreach ($data['enigmas'] as $item) {
+            $enigma = $enigmaRepository->find($item['id']);
+            if ($enigma && $enigma->getGame() === $game) {
+                $enigma->setOrder($item['order']);
+                $enigma->setIsActive($item['isActive']);
+            }
+        }
+        
+        $em->flush();
+        
+        return new JsonResponse(['success' => true]);
     }
 }

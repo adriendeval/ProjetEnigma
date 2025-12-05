@@ -112,7 +112,6 @@ class PlayController extends AbstractController
 
             return new JsonResponse([
                 'success' => true,
-                'secretCode' => $enigma->getSecretCode(),
                 'message' => 'Bonne réponse !'
             ]);
         }

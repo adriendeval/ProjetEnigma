@@ -33,7 +33,6 @@
                         <th class="px-6 py-3 text-left text-gray-700 font-semibold">Ordre</th>
                         <th class="px-6 py-3 text-left text-gray-700 font-semibold">Titre</th>
                         <th class="px-6 py-3 text-left text-gray-700 font-semibold">Type</th>
-                        <th class="px-6 py-3 text-left text-gray-700 font-semibold">Code</th>
                         <th class="px-6 py-3 text-right text-gray-700 font-semibold">Actions</th>
                     </tr>
                 </thead>
@@ -45,7 +44,6 @@
                             <td class="px-6 py-4">
                                 <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">{{ enigma.type.label }}</span>
                             </td>
-                            <td class="px-6 py-4 font-mono">{{ enigma.secretCode }}</td>
                             <td class="px-6 py-4 text-right space-x-2">
                                 <a href="{{ path('admin_enigmas_edit', {id: enigma.id}) }}" class="text-blue-600 hover:text-blue-800">
                                     Modifier

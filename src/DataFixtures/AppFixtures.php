@@ -50,7 +50,7 @@ class AppFixtures extends Fixture
 
         $game = new Game();
         $game->setTitle("L'Intelligence Artificielle");
-        $game->setWelcomeMsg("Bienvenue dans ce jeu d'énigmes sur l'Intelligence Artificielle !\n\nDécouvrez les enjeux, les défis et les opportunités de cette technologie qui révolutionne notre monde.\n\nVous allez devoir résoudre plusieurs énigmes en équipe. Chaque énigme vous donnera un code secret. À la fin, vous devrez saisir le code final pour gagner.\n\nBonne chance !");
+        $game->setWelcomeMsg("Bienvenue dans ce jeu d'énigmes sur l'Intelligence Artificielle !\n\nDécouvrez les enjeux, les défis et les opportunités de cette technologie qui révolutionne notre monde.\n\nVous allez devoir résoudre plusieurs énigmes en équipe. À la fin, vous devrez saisir le code final pour gagner.\n\nBonne chance !");
         $game->setWelcomeImg('ai-welcome.jpg');
         $manager->persist($game);
 
@@ -67,7 +67,6 @@ class AppFixtures extends Fixture
         $enigma->setOrder(1);
         $enigma->setTitle("IA ou pas ?");
         $enigma->setInstruction("Parmi chaque paire d'images, trouvez celle qui n'a PAS été générée par une Intelligence Artificielle. Vous avez droit à 2 erreurs maximum.");
-        $enigma->setSecretCode('0123');
         $enigma->setData([
             'pairs' => [
                 [
@@ -98,7 +97,6 @@ class AppFixtures extends Fixture
         $enigma2->setOrder(2);
         $enigma2->setTitle("Histoire de l'IA");
         $enigma2->setInstruction("Remettez ces événements marquants de l'histoire de l'Intelligence Artificielle dans le bon ordre chronologique.");
-        $enigma2->setSecretCode('4567');
         $enigma2->setData([
             'items' => [
                 ['id' => 1, 'text' => 'Test de Turing proposé par Alan Turing (1950)'],
@@ -116,7 +114,6 @@ class AppFixtures extends Fixture
         $enigma3->setOrder(3);
         $enigma3->setTitle("Culture générale IA");
         $enigma3->setInstruction("Répondez correctement à toutes les questions sur l'Intelligence Artificielle.");
-        $enigma3->setSecretCode('8910');
         $enigma3->setData([
             'questions' => [
                 [
