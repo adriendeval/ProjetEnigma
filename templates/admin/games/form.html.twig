@@ -22,7 +22,7 @@
 
             <div>
                 {{ form_label(form.welcomeImg, null, {'label_attr': {'class': 'block text-gray-700 font-semibold mb-2'}}) }}
-                {{ form_widget(form.welcomeImg, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500'}}) }}
+                {{ form_widget(form.welcomeImg, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500', 'placeholder': 'image.jpg'}}) }}
                 {{ form_errors(form.welcomeImg) }}
                 <p class="text-sm text-gray-600 mt-1">Chemin relatif depuis public/images/games/</p>
             </div>

@@ -6,6 +6,7 @@ use App\Entity\Enigma;
 use App\Entity\Type;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -41,6 +42,18 @@ class EnigmaType extends AbstractType
                 'help' => 'Format JSON pour les données spécifiques de l\'énigme'
             ])
         ;
+
+        $builder->get('data')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($dataAsArray) {
+                    // transform the array to a string
+                    return json_encode($dataAsArray, JSON_PRETTY_PRINT);
+                },
+                function ($dataAsString) {
+                    // transform the string back to an array
+                    return json_decode($dataAsString, true) ?? [];
+                }
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver): void

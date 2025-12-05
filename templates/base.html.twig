@@ -1,60 +1,87 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}Projet Enigma{% endblock %}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			{% block title %}Projet Enigma
+			{% endblock %}
+		</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+		<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-straight/css/uicons-regular-straight.css'>
+		<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-solid-straight/css/uicons-solid-straight.css'>
+		<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/3.0.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
 
-        <style>
-        {% block stylesheets %}
-        * {
-            outline: none;
-        }
-        {% endblock %}
-        </style>
+		<style>
+			{% block stylesheets %}
+				@import url('https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,100..900;1,100..900&display=swap');
 
-    </head>
-    <body class="bg-gray-50 min-h-screen flex flex-col">
-        <nav class="bg-white text-gray-800 shadow-sm">
-            <div class="container mx-auto px-4 py-3">
-                <div class="flex justify-between items-center">
-                    <a href="{{ path('home') }}" class="text-xl font-semibold">Projet Enigma</a>
-                    <div class="space-x-4">
-                        {% if app.user %}
-                            <a href="{{ path('admin_dashboard') }}" class="text-gray-600 hover:text-blue-600">Tableau de bord</a>
-                            <a href="{{ path('logout') }}" class="text-gray-600 hover:text-blue-600">Déconnexion</a>
-                        {% else %}
-                            <a href="{{ path('login') }}" class="text-gray-600 hover:text-blue-600">Connexion Admin</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </nav>
+				body {
+					font-family: 'Chivo', sans-serif;
+				}
 
-        <main class="flex-grow container mx-auto px-4 py-8">
-            {% for message in app.flashes('success') %}
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    {{ message }}
-                </div>
-            {% endfor %}
+				* {
+					outline: none;
+				}
 
-            {% for message in app.flashes('error') %}
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    {{ message }}
-                </div>
-            {% endfor %}
+				i.fi {
+					vertical-align: middle;
+					top: 1px;
+					position: relative;
+				}
+			{% endblock %}
+		</style>
 
-            {% block body %}{% endblock %}
-        </main>
+	</head>
+	<body class="bg-gray-50 min-h-screen flex flex-col">
+		<nav class="bg-white text-gray-800 shadow-sm">
+			<div class="container mx-auto px-4 py-3">
+				<div class="flex justify-between items-center">
+					<a href="{{ path('home') }}" class="text-xl font-semibold">Projet Enigma</a>
+					<div class="space-x-4">
+						{% if app.user %}
+							<a href="{{ path('admin_dashboard') }}" class="text-gray-600 hover:text-blue-600">
+								<i class="fi fi-rs-dashboard"></i>
+								Tableau de bord</a>
+							<a href="{{ path('logout') }}" class="text-gray-600 hover:text-red-600">
+								<i class="fi fi-rs-sign-out-alt"></i>
+								Déconnexion</a>
+						{% else %}
+							<a href="{{ path('login') }}" class="text-gray-600 hover:text-blue-600">
+								<i class="fi fi-rs-sign-in-alt"></i>
+								Connexion Admin</a>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</nav>
 
-        <footer class="bg-gray-100 text-gray-600 py-4 mt-auto">
-            <div class="container mx-auto px-4 text-center">
-                <p>&copy; {{ "now"|date("Y") }} Projet Enigma</p>
-            </div>
-        </footer>
+		<main class="flex-grow container mx-auto px-4 py-8">
+			{% for message in app.flashes('success') %}
+				<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+					{{ message }}
+				</div>
+			{% endfor %}
 
-        {% block javascripts %}{% endblock %}
-    </body>
+			{% for message in app.flashes('error') %}
+				<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+					{{ message }}
+				</div>
+			{% endfor %}
+
+			{% block body %}{% endblock %}
+		</main>
+
+		<footer class="bg-gray-100 text-gray-600 py-4 mt-auto">
+			<div class="container mx-auto px-4 text-center">
+				<p>&copy;
+					{{ "now"|date("Y") }}
+					Projet Enigma</p>
+			</div>
+		</footer>
+
+		{% block javascripts %}{% endblock %}
+	</body>
 </html>
